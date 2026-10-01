@@ -27,6 +27,7 @@ async function getAllQuestions() {
             var arr = Object.values(snap.val())
             QuizData = shuffleArray(arr)
             showQuizQuestion()
+            startTimer()   // 👈 questions load hone ke baad timer start
             console.log(QuizData)
         })
 }
@@ -36,32 +37,39 @@ var index = 0;
 var score = 0;
 var correctAnswer = 0;
 
-var min = 1
-var second = 50000000;
-var timer1 = setInterval(() => {
-    if (second > 0) {
-        second--;
-    }
-    else if (second == 0 && min != 0) {
-        min = min - 1
-        second = 5
-        if (min == 0) {
-            second = 0
+// ⏱ 30 minute timer
+var totalSeconds = 30 * 60;   // 30 minute = 1800 seconds
+var timer1 = null;
+
+function updateTimerDisplay() {
+    var m = Math.floor(totalSeconds / 60);
+    var s = totalSeconds % 60;
+    timer.innerText = String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+}
+
+function startTimer() {
+    if (timer1 !== null) return;   // timer dobara start na ho
+
+    updateTimerDisplay();
+    timer1 = setInterval(() => {
+        totalSeconds--;
+        updateTimerDisplay();
+
+        if (totalSeconds <= 0) {
+            clearInterval(timer1);
+            timeUp();
         }
+    }, 1000);
+}
 
+// Time khatam hone par ye chalega
+async function timeUp() {
+    MainCard.style.display = "none";
+    result.style.display = "block";
 
-    }
-    else if (second == 0 && min == 0) {
+    var percentage = ((score / QuizData.length) * 100).toFixed(0);
 
-        clearInterval(timer1)
-
-        MainCard.style.display = "none"
-        MainCard.style.display = "none";
-        result.style.display = "block";
-
-        var percentage = ((score / QuizData.length) * 100).toFixed(0);
-
-        result.innerHTML = `
+    result.innerHTML = `
     <h1>🎉 Quiz Result</h1>
 
     <div class="score">${percentage}%</div>
@@ -88,14 +96,18 @@ var timer1 = setInterval(() => {
 
     <button onclick="location.reload()">Try Again</button>
 `;
+
+    // time khatam hone par result firebase me save
+    var quizkey = localStorage.getItem("quizKey")
+    var loginUser = localStorage.getItem("loginUser")
+
+    var resultObj = {
+        quizkey: quizkey,
+        loginUser: loginUser,
+        score: percentage,
     }
-    timer.innerText = min + ":" + second
-
-}, 1000)
-
-
-
-// 15second
+    await firebase.database().ref("user").child(loginUser).child("Result").push(resultObj)
+}
 
 
 
@@ -135,9 +147,6 @@ function showQuizQuestion() {
         li.appendChild(label);
         ul.appendChild(li);
 
-
-
-
     }
 
 
@@ -151,7 +160,6 @@ function showQuizQuestion() {
     if (QuizData.length - 1 == index) {
         button.innerText = "Submit"
         button.setAttribute("onclick", "submit()")
-
 
     }
     else {
@@ -168,9 +176,6 @@ function showQuizQuestion() {
     for (var i = 0; i < input.length; i++) {
         console.log(input[i])
         input[i].addEventListener("change", function (e) {
-            // console.log(e.target.checked)
-
-
 
             if (e.target.checked == true) {
                 if (btn1.childNodes[0].disabled == true) {
@@ -184,12 +189,8 @@ function showQuizQuestion() {
                 btn1.childNodes[0].style.backgroundColor = "grey"
             }
 
-
         })
     }
-
-
-
 
 }
 
@@ -232,7 +233,8 @@ async function submit() {
         }
     }
     if (check == true) {
-        MainCard.style.display = "none"
+        clearInterval(timer1)   // 👈 submit karte hi timer band
+
         MainCard.style.display = "none";
         result.style.display = "block";
 
@@ -268,14 +270,10 @@ async function submit() {
         var quizkey = localStorage.getItem("quizKey")
         var loginUser = localStorage.getItem("loginUser")
 
-
-
-        // 
         var resultObj = {
             quizkey: quizkey,
             loginUser: loginUser,
             score: percentage,
-
         }
         console.log(resultObj)
         var res = await firebase.database().ref("user").child(loginUser).child("Result").push(resultObj)
@@ -286,8 +284,6 @@ async function submit() {
     }
 }
 
-// showQuizQuestion()
-
 
 
 
@@ -296,20 +292,15 @@ async function checkQuiz() {
     var loginUser = localStorage.getItem("loginUser")
     var percentage = 0;
 
-
     var startQuiz = true;
     var res = await firebase.database().ref("user").child(loginUser).child("Result")
         .get()
         .then((snap) => {
             console.log(snap.val())
-               if(snap.val()==null){
-                  getAllQuestions()
-                  return
-
-
+            if (snap.val() == null) {
+                return   // 👈 yahan getAllQuestions() hata diya, neeche already call hota hai
             }
             var object = Object.values(snap.val())
-         
 
             console.log(object)
             for (var i = 0; i < object.length; i++) {
@@ -317,11 +308,8 @@ async function checkQuiz() {
                     console.log("true")
                     startQuiz = false;
                     percentage = object[i].score
-
                 }
             }
-
-
 
         })
     if (startQuiz == true) {
@@ -329,7 +317,6 @@ async function checkQuiz() {
 
     }
     else {
-        MainCard.style.display = "none"
         MainCard.style.display = "none";
         result.style.display = "block";
         result.innerHTML = `
