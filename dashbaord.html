@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional ID Card</title>
+
+<!-- For pdf create and download -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 15px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #eef2f7, #dbe4ee);
+    color: #1c2530;
+}
+
+#username {
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #12203c;
+}
+
+/* =========================
+   PAGE
+========================= */
+.page {
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
+}
+
+.page > h2 {
+    margin-bottom: 22px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #12203c;
+    text-transform: uppercase;
+}
+
+/* =========================
+   ID CARD
+========================= */
+.card {
+    position: relative;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.15),
+        0 5px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e6ec;
+    padding-bottom: 20px;
+}
+
+/* Punch hole for lanyard */
+.card::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55px;
+    height: 8px;
+    background: #d9dee6;
+    border-radius: 10px;
+    z-index: 10;
+}
+
+/* =========================
+   HEADER
+========================= */
+.top {
+    position: relative;
+    padding: 30px 20px 45px;
+    background: linear-gradient(135deg, #12203c, #1f3a68);
+    text-align: center;
+    color: #ffffff;
+}
+
+.top h2 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.top p {
+    margin-top: 5px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #b9c3d6;
+}
+
+/* gold accent line */
+.top::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #f7c948, #f4a41c);
+}
+
+/* =========================
+   PHOTO
+========================= */
+.photo-wrap {
+    position: relative;
+    margin-top: -40px;
+    display: flex;
+    justify-content: center;
+}
+
+#stdImage {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #ffffff;
+    background: #f0f0f0;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================
+   DETAILS
+========================= */
+.details {
+    margin-top: 12px;
+    padding: 0 24px;
+    text-align: center;
+}
+
+.details p {
+    margin: 6px 0;
+    font-size: 12.5px;
+    color: #3a4556;
+}
+
+#studentName {
+    font-size: 17px;
+    font-weight: 700;
+    color: #12203c;
+    margin-top: 4px;
+}
+
+#studentCourse {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #12203c;
+    background: #f4a41c33;
+    border: 1px solid #f4a41c;
+    border-radius: 20px;
+}
+
+/* =========================
+   DIVIDER
+========================= */
+.divider {
+    width: 85%;
+    height: 1px;
+    margin: 16px auto;
+    background: repeating-linear-gradient(
+        90deg,
+        #d9dee6,
+        #d9dee6 6px,
+        transparent 6px,
+        transparent 12px
+    );
+}
+
+/* =========================
+   FOOTER (QR + SIGN)
+========================= */
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    gap: 10px;
+}
+
+.qr-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.qr-box {
+    width: 62px;
+    height: 62px;
+    padding: 4px;
+    background: #ffffff;
+    border: 1px solid #e2e6ec;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.qr-section span {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #8792a3;
+}
+
+.sign-section {
+    flex: 1;
+    text-align: right;
+}
+
+.sign-line {
+    width: 100%;
+    height: 1px;
+    background: #b9c3d6;
+    margin-bottom: 4px;
+}
+
+.sign-section span {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: #8792a3;
+    text-transform: uppercase;
+}
+
+/* org tag bottom */
+.org-tag {
+    margin-top: 14px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #b9c3d6;
+    text-transform: uppercase;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.btn-group {
+    margin-top: 26px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-group button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    color: #ffffff;
+    background: linear-gradient(135deg, #12203c, #1f3a68);
+    box-shadow: 0 6px 15px rgba(18, 32, 60, 0.3);
+}
+
+.btn-group button:last-child {
+    background: linear-gradient(135deg, #f4a41c, #f7c948);
+    color: #12203c;
+    box-shadow: 0 6px 15px rgba(244, 164, 28, 0.35);
+}
+
+.btn-group button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 380px) {
+    .page { max-width: 300px; }
+    #stdImage { width: 85px; height: 85px; }
+    #studentName { font-size: 15px; }
+    .details p { font-size: 11px; }
+    .qr-box { width: 54px; height: 54px; }
+}
+</style>
+</head>
+<body>
+
+<h1 id="username"></h1>
+
+<div class="page">
+
+    <h2>ID Card Preview</h2>
+
+    <div class="card" id="card">
+
+        <div class="top">
+            <h2>SMIT Hyderabad</h2>
+            <p>Student Identity Card</p>
+        </div>
+
+        <div class="photo-wrap">
+            <img src="" alt="" id="stdImage">
+        </div>
+
+        <div class="details">
+            <p id="studentName">Name:</p>
+            <p id="studentEmail">Email:</p>
+            <p id="studentCourse">Course:</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="footer">
+            <div class="qr-section">
+                <div class="qr-box" id="qrcode"></div>
+                <span>SCAN ID</span>
+            </div>
+
+            <div class="sign-section">
+                <div class="sign-line"></div>
+                <span>Authorized Signature</span>
+            </div>
+        </div>
+
+        <div class="org-tag">SMIT Hyderabad &bull; Est. Excellence</div>
+
+    </div>
+
+    <div class="btn-group">
+        <button onclick="pdfDownload()">Download PDF</button>
+        <button type="button" onclick="StartQuiz()">View All Quiz</button>
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA9gqmIJZU_AiFdFCoz5jkhnCMKBX6Lr4g",
+        authDomain: "quiz-app-ef9a1.firebaseapp.com",
+        databaseURL: "https://quiz-app-ef9a1-default-rtdb.firebaseio.com",
+        projectId: "quiz-app-ef9a1",
+        storageBucket: "quiz-app-ef9a1.firebasestorage.app",
+        messagingSenderId: "859213786487",
+        appId: "1:859213786487:web:64e419aa1275e132e40572"
+    };
+    firebase.initializeApp(firebaseConfig);
+</script>
+<script src="./dashbaord.js"></script>
+</body>
+</html>

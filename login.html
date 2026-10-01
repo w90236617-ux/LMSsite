@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 15px;
+
+    background: linear-gradient(135deg, #2a7b9b 0%, #57c785 50%, #eddd53 100%);
+    background-attachment: fixed;
+
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+}
+
+body::before {
+    width: 350px;
+    height: 350px;
+    background: rgba(255, 255, 255, 0.25);
+    top: -100px;
+    right: -100px;
+}
+
+body::after {
+    width: 300px;
+    height: 300px;
+    background: rgba(0, 0, 0, 0.1);
+    bottom: -100px;
+    left: -100px;
+}
+
+/* =========================
+   CARD
+========================= */
+.auth-card {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 420px;
+
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+
+    padding: 45px 32px;
+
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.25),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4);
+
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.auth-card:hover {
+    transform: rotateX(2deg) rotateY(2deg) translateY(-4px);
+    box-shadow:
+        0 35px 70px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+/* icon avatar at top */
+.avatar-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    border: 2px solid rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.auth-card h2 {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.auth-card p.subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 28px;
+}
+
+/* =========================
+   INPUTS
+========================= */
+.input-group {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.input-group .icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: rgba(255,255,255,0.9);
+    pointer-events: none;
+}
+
+input[type="email"],
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    height: 50px;
+    padding: 0 16px 0 44px;
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+
+    font-size: 14px;
+    outline: none;
+
+    transition: 0.3s ease;
+
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+input:focus {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: #ffffff;
+    box-shadow:
+        inset 0 2px 6px rgba(0,0,0,0.08),
+        0 0 0 3px rgba(255,255,255,0.25);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+#signin {
+    width: 100%;
+    height: 50px;
+    margin-top: 8px;
+    margin-bottom: 14px;
+
+    border: none;
+    border-radius: 12px;
+
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #1f7a4f;
+
+    background: linear-gradient(135deg, #ffffff, #eafff2);
+
+    cursor: pointer;
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.2),
+        inset 0 1px 1px rgba(255,255,255,0.6);
+
+    transition: 0.3s ease;
+}
+
+#signin:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 15px 32px rgba(0, 0, 0, 0.28),
+        inset 0 1px 1px rgba(255,255,255,0.6);
+}
+
+#signin:active {
+    transform: translateY(0);
+}
+
+/* divider */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0;
+}
+
+.divider .line {
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.4);
+}
+
+.divider span {
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 1px;
+}
+
+/* google button */
+.google-btn {
+    width: 100%;
+    height: 50px;
+    margin-bottom: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.google-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.google-btn .g-icon {
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ea4335;
+}
+
+/* =========================
+   FOOTER TEXT
+========================= */
+.auth-card > span {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.9);
+}
+
+.auth-card > span a {
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 460px) {
+    .auth-card {
+        padding: 35px 22px;
+        border-radius: 20px;
+    }
+
+    .auth-card h2 {
+        font-size: 22px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="auth-card">
+
+    <div class="avatar-icon">🔐</div>
+
+    <h2>Welcome Back</h2>
+    <p class="subtitle">Login to continue to your account</p>
+
+    <div class="input-group">
+        <span class="icon">✉️</span>
+        <input type="email" placeholder="Enter your email" id="email">
+    </div>
+
+    <div class="input-group">
+        <span class="icon">🔒</span>
+        <input type="text" placeholder="Enter password" id="password">
+    </div>
+
+    <button id="signin">Login</button>
+
+    <div class="divider">
+        <div class="line"></div>
+        <span>OR</span>
+        <div class="line"></div>
+    </div>
+
+    <button class="google-btn" onclick="SignLogin()">
+        <span class="g-icon">G</span>
+        Continue with Google
+    </button>
+
+    <span>Don't have an account? <a href="./index.html">Sign Up</a></span>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA9gqmIJZU_AiFdFCoz5jkhnCMKBX6Lr4g",
+        authDomain: "quiz-app-ef9a1.firebaseapp.com",
+        databaseURL: "https://quiz-app-ef9a1-default-rtdb.firebaseio.com",
+        projectId: "quiz-app-ef9a1",
+        storageBucket: "quiz-app-ef9a1.firebasestorage.app",
+        messagingSenderId: "859213786487",
+        appId: "1:859213786487:web:64e419aa1275e132e40572"
+    };
+    firebase.initializeApp(firebaseConfig);
+</script>
+<script src="./login.js"></script>
+
+</body>
+</html>

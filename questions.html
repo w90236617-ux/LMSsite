@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Document</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<!-- quizapp   b9utxkfn            https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload -->
+
+<body>
+
+ <div id="MainCard">
+        <b id="TotalQuestion"></b>
+        <b id="timer"></b>
+        <div id="container">
+
+        </div>
+
+    </div>
+
+    <div id="result" style="display: none;">
+        
+
+    </div>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
+    <script>
+         const firebaseConfig = {
+   apiKey: "AIzaSyA9gqmIJZU_AiFdFCoz5jkhnCMKBX6Lr4g",
+  authDomain: "quiz-app-ef9a1.firebaseapp.com",
+  databaseURL: "https://quiz-app-ef9a1-default-rtdb.firebaseio.com",
+  projectId: "quiz-app-ef9a1",
+  storageBucket: "quiz-app-ef9a1.firebasestorage.app",
+  messagingSenderId: "859213786487",
+  appId: "1:859213786487:web:64e419aa1275e132e40572"
+  };
+  firebase.initializeApp(firebaseConfig);
+  </script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

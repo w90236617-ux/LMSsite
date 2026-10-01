@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 15px;
+
+    background: linear-gradient(135deg, #2a7b9b 0%, #57c785 50%, #eddd53 100%);
+    background-attachment: fixed;
+
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* floating blurred shapes for depth */
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+}
+
+body::before {
+    width: 350px;
+    height: 350px;
+    background: rgba(255, 255, 255, 0.25);
+    top: -100px;
+    left: -100px;
+}
+
+body::after {
+    width: 300px;
+    height: 300px;
+    background: rgba(0, 0, 0, 0.1);
+    bottom: -100px;
+    right: -100px;
+}
+
+/* =========================
+   CARD
+========================= */
+.auth-card {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 420px;
+
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+
+    padding: 40px 32px;
+
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.25),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4);
+
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.auth-card:hover {
+    transform: rotateX(2deg) rotateY(-2deg) translateY(-4px);
+    box-shadow:
+        0 35px 70px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.auth-card h2 {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.auth-card p.subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 28px;
+}
+
+/* =========================
+   IMAGE UPLOAD
+========================= */
+.upload-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.upload-circle {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px dashed rgba(255,255,255,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.upload-circle:hover {
+    transform: scale(1.05);
+    border-color: #ffffff;
+}
+
+.upload-circle img#previewImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.upload-circle .icon {
+    font-size: 26px;
+    color: #ffffff;
+}
+
+#imageuplaod {
+    display: none;
+}
+
+#load {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* =========================
+   INPUTS
+========================= */
+.input-group {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.input-group .icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: rgba(255,255,255,0.9);
+    pointer-events: none;
+}
+
+input[type="email"],
+input[type="text"],
+input[type="password"],
+select#courseList {
+    width: 100%;
+    height: 50px;
+    padding: 0 16px 0 44px;
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+
+    font-size: 14px;
+    outline: none;
+
+    transition: 0.3s ease;
+
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+input:focus,
+select#courseList:focus {
+    background: rgba(255, 255, 255, 0.28);
+    border-color: #ffffff;
+    box-shadow:
+        inset 0 2px 6px rgba(0,0,0,0.08),
+        0 0 0 3px rgba(255,255,255,0.25);
+}
+
+select#courseList {
+    padding-left: 16px;
+    cursor: pointer;
+    color: #333;
+    background: rgba(255,255,255,0.85);
+}
+
+select#courseList option {
+    color: #222;
+}
+
+/* =========================
+   BUTTON
+========================= */
+#signup {
+    width: 100%;
+    height: 50px;
+    margin-top: 8px;
+    margin-bottom: 18px;
+
+    border: none;
+    border-radius: 12px;
+
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #1f7a4f;
+
+    background: linear-gradient(135deg, #ffffff, #eafff2);
+
+    cursor: pointer;
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.2),
+        inset 0 1px 1px rgba(255,255,255,0.6);
+
+    transition: 0.3s ease;
+}
+
+#signup:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 15px 32px rgba(0, 0, 0, 0.28),
+        inset 0 1px 1px rgba(255,255,255,0.6);
+}
+
+#signup:active {
+    transform: translateY(0);
+}
+
+/* =========================
+   FOOTER TEXT
+========================= */
+.auth-card > span {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.9);
+}
+
+.auth-card > span a {
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 460px) {
+    .auth-card {
+        padding: 30px 22px;
+        border-radius: 20px;
+    }
+
+    .auth-card h2 {
+        font-size: 22px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="auth-card">
+
+    <h2>Create Account</h2>
+    <p class="subtitle">Sign up to get started with your journey</p>
+
+    <div class="upload-wrap">
+        <label for="imageuplaod" class="upload-circle">
+            <span class="icon" id="uploadIcon">📷</span>
+            <img id="previewImg" src="" alt="">
+        </label>
+        <input type="file" id="imageuplaod" accept="image/*">
+        <span id="load" style="display: none;">Uploading...</span>
+    </div>
+
+    <div class="input-group">
+        <span class="icon">✉️</span>
+        <input type="email" placeholder="Enter your email" id="email">
+    </div>
+
+    <div class="input-group">
+        <span class="icon">🔒</span>
+        <input type="text" placeholder="Enter password" id="password">
+    </div>
+
+    <div class="input-group">
+        <span class="icon">👤</span>
+        <input type="text" placeholder="Enter your name" id="name">
+    </div>
+
+    <div class="input-group">
+        <select name="" id="courseList" style="display: none;">
+            <option value="" disabled selected>Select Course</option>
+        </select>
+    </div>
+
+    <button id="signup">Sign Up</button>
+
+    <span>Already have an account? <a href="./login.html">Login</a></span>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA9gqmIJZU_AiFdFCoz5jkhnCMKBX6Lr4g",
+        authDomain: "quiz-app-ef9a1.firebaseapp.com",
+        databaseURL: "https://quiz-app-ef9a1-default-rtdb.firebaseio.com",
+        projectId: "quiz-app-ef9a1",
+        storageBucket: "quiz-app-ef9a1.firebasestorage.app",
+        messagingSenderId: "859213786487",
+        appId: "1:859213786487:web:64e419aa1275e132e40572"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // image preview (visual only, doesn't affect your signup.js logic)
+    const imageInput = document.getElementById("imageuplaod");
+    const previewImg = document.getElementById("previewImg");
+    const uploadIcon = document.getElementById("uploadIcon");
+
+    imageInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImg.src = e.target.result;
+                previewImg.style.display = "block";
+                uploadIcon.style.display = "none";
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+<script src="./signup.js"></script>
+
+</body>
+</html>

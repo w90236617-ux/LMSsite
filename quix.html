@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #f4f6fb, #e8edf5);
+    min-height: 100vh;
+    color: #1c2530;
+    padding-bottom: 60px;
+}
+
+/* =========================
+   HEADER
+========================= */
+.dashboard-header {
+    text-align: center;
+    padding: 50px 20px 35px;
+    background: linear-gradient(135deg, #12203c, #1f3a68);
+    color: #ffffff;
+    border-radius: 0 0 30px 30px;
+    box-shadow: 0 10px 30px rgba(18, 32, 60, 0.25);
+    margin-bottom: 45px;
+}
+
+.dashboard-header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.dashboard-header p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #b9c3d6;
+    letter-spacing: 0.5px;
+}
+
+/* =========================
+   QUIZ LIST GRID
+========================= */
+#quizList {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+}
+
+/* =========================
+   QUIZ CARD
+========================= */
+.card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px 22px;
+    text-align: left;
+
+    border: 1px solid #e2e6ec;
+    box-shadow: 0 8px 20px rgba(18, 32, 60, 0.08);
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    cursor: pointer;
+    overflow: hidden;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* top accent strip */
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #f4a41c, #f7c948);
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 35px rgba(18, 32, 60, 0.18);
+}
+
+/* =========================
+   CARD CONTENT (generic tags
+   in case quiz.js injects
+   h3 / p / span / button)
+========================= */
+.card h2,
+.card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #12203c;
+    margin-top: 4px;
+}
+
+.card p {
+    font-size: 13px;
+    color: #5a6577;
+    line-height: 1.5;
+}
+
+.card span {
+    display: inline-block;
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #12203c;
+    background: #f4a41c33;
+    border: 1px solid #f4a41c;
+    border-radius: 20px;
+}
+
+/* icon circle (optional, if JS adds .quiz-icon) */
+.card .quiz-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #12203c, #1f3a68);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+/* action button inside card */
+.card button,
+.card a.btn {
+    margin-top: 12px;
+    align-self: flex-start;
+    padding: 9px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: #ffffff;
+    text-decoration: none;
+    background: linear-gradient(135deg, #12203c, #1f3a68);
+    box-shadow: 0 6px 14px rgba(18, 32, 60, 0.3);
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.card button:hover,
+.card a.btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+#quizList:empty::before {
+    content: "No quizzes available right now. Please check back later.";
+    display: block;
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 14px;
+    color: #8792a3;
+    background: #ffffff;
+    border: 1px dashed #d9dee6;
+    border-radius: 16px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 500px) {
+    .dashboard-header h1 {
+        font-size: 24px;
+    }
+
+    .dashboard-header p {
+        font-size: 12px;
+    }
+
+    #quizList {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="dashboard-header">
+    <h1>Welcome to Your Dashboard</h1>
+    <p>Select a quiz below and test your knowledge</p>
+</div>
+
+<div id="quizList"></div>
+
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-database-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA9gqmIJZU_AiFdFCoz5jkhnCMKBX6Lr4g",
+        authDomain: "quiz-app-ef9a1.firebaseapp.com",
+        databaseURL: "https://quiz-app-ef9a1-default-rtdb.firebaseio.com",
+        projectId: "quiz-app-ef9a1",
+        storageBucket: "quiz-app-ef9a1.firebasestorage.app",
+        messagingSenderId: "859213786487",
+        appId: "1:859213786487:web:64e419aa1275e132e40572"
+    };
+    firebase.initializeApp(firebaseConfig);
+</script>
+
+<script src="./quiz.js"></script>
+
+</body>
+</html>
